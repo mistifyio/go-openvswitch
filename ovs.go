@@ -11,7 +11,7 @@ import (
 func run(cmd string, arg ...string) (bytes.Buffer, bytes.Buffer, error) {
 	var stdout, stderr bytes.Buffer
 
-	command := exec.Command("ovs-vsctl", arg...)
+	command := exec.Command(cmd, arg...)
 	command.Stdout = &stdout
 	command.Stderr = &stderr
 
