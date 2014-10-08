@@ -73,3 +73,44 @@ func TestCommands(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestOpenFlow(t *testing.T) {
+	var err error
+
+	// AddBridge
+	if err = ovs.AddBridge("br0"); err != nil {
+		fmt.Printf("Add bridge failed: %s", err.Error())
+		t.FailNow()
+	}
+
+	// FlowInfo
+	info, err := ovs.FlowInfo("br0")
+
+	if err != nil {
+		fmt.Printf("OpenFlow show failed: %s", err.Error())
+		t.FailNow()
+	}
+
+	if len(info.Flows) == 0 {
+		fmt.Printf("OpenFlow show failed: no flows")
+		t.FailNow()
+	}
+
+	// AddFlow
+	if err = ovs.AddFlow("br0", "table=0, dl_src=01:00:00:00:00:00/01:00:00:00:00:00, actions=drop"); err != nil {
+		fmt.Printf("AddFlow failed: %s", err.Error())
+		t.FailNow()
+	}
+
+	// DeleteFlow
+	if err = ovs.DeleteFlow("br0", "table=0, dl_src=01:00:00:00:00:00/01:00:00:00:00:00"); err != nil {
+		fmt.Printf("DelFlow failed: %s", err.Error())
+		t.FailNow()
+	}
+
+	// DeleteBridge
+	if err = ovs.DeleteBridge("br0"); err != nil {
+		fmt.Printf("Delete bridge failed: %s", err.Error())
+		t.FailNow()
+	}
+}
